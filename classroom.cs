@@ -9,23 +9,23 @@ public enum ClassroomType
 
  public interface IClassroom
 {
-    int number_classroom { get; }
-     int Capacity { get; }
-     bool IsAvailable { get; }
-     int id { get; }
-    DateTime? SchedulingDate { get; set; }//a data de agendamento pode ser nula ou não, dependendo se a sala já tiver sido agendada ou não   
+     public int number_classroom { get; }
+     public int Capacity { get; }
+     private bool IsAvailable { get; }
+     private int id { get; }
+    private DateTime? SchedulingDate { get; set; }//a data de agendamento pode ser nula ou não, dependendo se a sala já tiver sido agendada ou não   
 
     //List<Classroom> GetAvailableClassrooms(DateTime date);
 }//interface para definir as propriedades e métodos que as salas de aula devem implementar
 
 public class Classroom : IClassroom
 {
-    public ClassroomType Type { get; private set; }
-    public int number_classroom { get; private set; }
-    public int Capacity { get; private set; }
-    public bool IsAvailable { get; private set; }
-    public int id { get; private set; }
-    public DateTime? SchedulingDate { get; set; }
+    private ClassroomType Type { get; private set; }
+    private int number_classroom { get; private set; }
+    private int Capacity { get; private set; }
+    private bool IsAvailable { get; private set; }
+    private int id { get; private set; }
+    private DateTime? SchedulingDate { get; set; }
 
     public Classroom(ClassroomType type, int number_classroom, int capacity, bool isAvailable, int id)
     {
