@@ -9,11 +9,11 @@ public class User
             return this._name;
         }
     }
-    bool IsProfessor
+    public bool IsProfessor
     {
         get
         {
-            return this.IsProfessor;
+            return this._isProfessor;
         }
     }
 

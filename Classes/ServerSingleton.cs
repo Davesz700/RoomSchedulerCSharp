@@ -11,14 +11,20 @@ public class ServerSingleton
     private const string USERS_PATH = "./users.txt";
     private const string NOTIFICATIONS_PATH = "./Notifications.txt";
     private  List<IClassroom> _cachedRooms;
+    private List<User> _cachedUsers;
+    private List<Reservation> _cachedReservations;
     private ServerSingleton()
     {
         _cachedRooms = new();
-
+        _cachedUsers = new();
+        _cachedReservations = new();
     }
     public static ServerSingleton GetInstance()
     {
-        if(_instance == null)return new ServerSingleton();
+        if(_instance == null)
+        {
+            _instance = new ServerSingleton();
+        }
         return _instance;
     }
 
@@ -26,21 +32,24 @@ public class ServerSingleton
     {
         try
         {
-            List<string> users = File.ReadAllLines(USERS_PATH).ToList();
-            var usernames = users;
-            usernames.ForEach(x => x.Split("|"));
-            
-            if (usernames.Contains(Name))
+            if(_cachedUsers.Count == 0)
+            {
+                CacheUsers();
+            }
+
+            if (_cachedUsers.Any(u => u.Name == Name))
             {
                 throw new Exception("Um usuário com esse nome já existe!");
             }
+
             File.AppendAllText(USERS_PATH, $"\n{Name}|{IsProfessor}|{Password}");
-            return new User(Name, IsProfessor);
+            var createdUser = new User(Name, IsProfessor);
+            _cachedUsers.Add(createdUser);
+            return createdUser;
         }
         catch(Exception e)
         {
             Console.WriteLine(e);
-            
         }
         return null;
     }
@@ -48,21 +57,32 @@ public class ServerSingleton
     {
         try
         {
-            var user = File.ReadAllLines(USERS_PATH).ToList().FirstOrDefault( l => l.StartsWith(Name));
-            
-            if (user == null)
+            if(_cachedUsers.Count == 0)
+            {
+                CacheUsers();
+            }
+
+            var cachedUser = _cachedUsers.FirstOrDefault(u => u.Name == Name);
+
+            if (cachedUser == null)
             {
                 throw new Exception("Usuário não encontrado!");
             }
-            var password = user.Split("|")[2];
-            
+
+            var userLine = File.ReadAllLines(USERS_PATH).ToList().FirstOrDefault(l => l.StartsWith(Name + "|"));
+            if (userLine == null)
+            {
+                throw new Exception("Usuário não encontrado!");
+            }
+
+            var password = userLine.Split("|")[2];
+
             if(Password != password)
             {
                 throw new Exception("Senha incorreta!");
             }
-            
-            if(user.Split("|")[1] == "true")return new User(Name, true);
-            else return new User(Name, false);        
+
+            return new User(Name, cachedUser.IsProfessor);
         }
         catch(Exception e)
         {
@@ -102,6 +122,47 @@ public class ServerSingleton
 
         });
     }
+
+    void CacheUsers()
+    {
+        var users = File.ReadAllLines(USERS_PATH).ToList();
+        users.ForEach(x =>
+        {
+            var separated = x.Split("|");
+
+            if(!_cachedUsers.Any(u => u.Name == separated[0]))
+            {
+                _cachedUsers.Add(new User(separated[0], separated[1] == "true"));
+            }
+        });
+    }
+
+    void CacheReservations()
+    {
+        if(_cachedUsers.Count == 0)
+        {
+            CacheUsers();
+        }
+
+        var reservations = File.ReadAllLines(RESERVATIONS_PATH).ToList();
+        reservations.ForEach(x =>
+        {
+            var separated = x.Split("|");
+            var authorName = separated[0];
+            var from = DateTime.Parse(separated[1]);
+            var to = DateTime.Parse(separated[2]);
+            var roomNumber = int.Parse(separated[3]);
+
+            if(!_cachedReservations.Any(r => r.Author.Name == authorName && r.From == from && r.To == to && r.RoomNumber == roomNumber))
+            {
+                var author = _cachedUsers.FirstOrDefault(u => u.Name == authorName) ?? new User(authorName, false);
+                var reservation = new Reservation(author, from, to);
+                reservation.RoomNumber = roomNumber;
+                _cachedReservations.Add(reservation);
+            }
+        });
+    }
+
     public void CreateRoom(int Number, ClassroomType type)
     {
         try
@@ -127,7 +188,37 @@ public class ServerSingleton
         return;
     }
 
+    public Reservation CreateReservation(User Author, DateTime From, DateTime To, int RoomNumber)
+    {
+        try
+        {
+            if(_cachedReservations.Count == 0)
+            {
+                CacheReservations();
+            }
 
-    
+            if(_cachedUsers.Count == 0)
+            {
+                CacheUsers();
+            }
+
+            var reservation = new Reservation(Author, From, To);
+            reservation.RoomNumber = RoomNumber;
+
+            if(_cachedReservations.Any(r => r.Author.Name == Author.Name && r.From == From && r.To == To && r.RoomNumber == RoomNumber))
+            {
+                throw new Exception("Esta reserva já existe!");
+            }
+
+            File.AppendAllText(RESERVATIONS_PATH, $"\n{Author.Name}|{From:o}|{To:o}|{RoomNumber}");
+            _cachedReservations.Add(reservation);
+            return reservation;
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        return null;
+    }
 
 }
