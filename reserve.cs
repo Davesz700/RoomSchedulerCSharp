@@ -47,5 +47,11 @@ namespace ReservaSalas.core
             return Inicio < outra.Fim && Fim > outra.Inicio;
         }
 
+        public void AdicionarServico(string servico) => _servicosExtras.Add(servico);
+
+        public override string ToString()
+            => $"Reserva #{Id} | Sala {SalaId} | {Data:dd/MM/yyyy} {Inicio:hh\\:mm}-{Fim:hh\\:mm}"
+             + (ServicosExtras.Count > 0 ? $" + [{string.Join(", ", ServicosExtras)}]" : "");
     }
+
 }
