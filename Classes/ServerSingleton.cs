@@ -1,6 +1,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 public class ServerSingleton
 {
@@ -8,10 +9,12 @@ public class ServerSingleton
     private const string RESERVATIONS_PATH = "./reservations.txt";
     private const string CLASSROOMS_PATH = "./classrooms.txt";
     private const string USERS_PATH = "./users.txt";
-
+    private const string NOTIFICATIONS_PATH = "./Notifications.txt";
+    private  List<IClassroom> _cachedRooms;
     private ServerSingleton()
     {
-        
+        _cachedRooms = new();
+
     }
     public static ServerSingleton GetInstance()
     {
@@ -31,7 +34,7 @@ public class ServerSingleton
             {
                 throw new Exception("Um usuário com esse nome já existe!");
             }
-            File.AppendAllText(USERS_PATH, $"{Name}|{IsProfessor}|{Password}");
+            File.AppendAllText(USERS_PATH, $"\n{Name}|{IsProfessor}|{Password}");
             return new User(Name, IsProfessor);
         }
         catch(Exception e)
@@ -45,7 +48,7 @@ public class ServerSingleton
     {
         try
         {
-            var user = File.ReadAllLines(USERS_PATH).FirstOrDefault( l => l.StartsWith(Name));
+            var user = File.ReadAllLines(USERS_PATH).ToList().FirstOrDefault( l => l.StartsWith(Name));
             
             if (user == null)
             {
@@ -66,6 +69,61 @@ public class ServerSingleton
             Console.WriteLine(e);
         }
         return null;
+    }
+
+
+    void CacheRooms()
+    {
+        var classrooms = File.ReadAllLines(CLASSROOMS_PATH).ToList();
+        classrooms.ForEach(x =>
+        {
+           var separated = x.Split("|");
+
+           if(!_cachedRooms.Any(x => x.Number == int.Parse(separated[0])))
+            {
+
+                switch (separated[1])
+                {                case "InfoLab":
+                        _cachedRooms.Add(ClassroomsFactory
+                            .CreateRoom(ClassroomType.InfoLab,int.Parse(separated[0])));
+                        break;
+                    case "SeminaryRoom":
+                        _cachedRooms.Add(ClassroomsFactory
+                            .CreateRoom(ClassroomType.SeminaryRoom,int.Parse(separated[0])));
+                        break;
+                    case "ChemistryLab":
+                        _cachedRooms.Add(ClassroomsFactory
+                            .CreateRoom(ClassroomType.ChemistryLab,int.Parse(separated[0])));
+                        break;
+                }
+
+            }
+
+        });
+    }
+    public void CreateRoom(int Number, ClassroomType type)
+    {
+        try
+        {
+            if(_cachedRooms.Count == 0)
+            {
+                CacheRooms();
+            }           
+
+            if(_cachedRooms.Any(x => x.Number == Number))
+            {
+                throw new Exception("Já existe uma sala com esse número!");
+            }
+            
+            File.AppendAllText(CLASSROOMS_PATH, $"\n{Number}|{type}");
+            CacheRooms();
+
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        return;
     }
 
 
