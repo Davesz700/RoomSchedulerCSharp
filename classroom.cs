@@ -9,75 +9,101 @@ public enum ClassroomType
 
  public interface IClassroom
 {
-     public int number_classroom { get; }
-     public int Capacity { get; }
-     private bool IsAvailable { get; }
-     private int id { get; }
-    private DateTime? SchedulingDate { get; set; }//a data de agendamento pode ser nula ou não, dependendo se a sala já tiver sido agendada ou não   
-
-    //List<Classroom> GetAvailableClassrooms(DateTime date);
+    int Id { get; }
+        int Numero { get; }
+        int Capacidade { get; }
+        TipoSala Tipo { get; }
+        bool EstaDisponivel(DateTime data, TimeSpan inicio, TimeSpan fim);
+        string Descricao { get; }
+    
 }//interface para definir as propriedades e métodos que as salas de aula devem implementar
 
-public class Classroom : IClassroom
+public abstract class Classroom : IClassroom
 {
-    private ClassroomType Type { get; private set; }
-    private int number_classroom { get; private set; }
-    private int Capacity { get; private set; }
-    private bool IsAvailable { get; private set; }
-    private int id { get; private set; }
-    private DateTime? SchedulingDate { get; set; }
+    public int Id { get; protected set; }
+        public int Numero { get; protected set; }
+        public int Capacidade { get; protected set; }
+        public abstract TipoSala Tipo { get; }
+        public abstract string Descricao { get; }
 
-    public Classroom(ClassroomType type, int number_classroom, int capacity, bool isAvailable, int id)
-    {
-        Type = type;
-        this.number_classroom = number_classroom;
-        Capacity = capacity;
-        IsAvailable = isAvailable;
-        this.id = id;
-        SchedulingDate = null;
-    }
+        // Delegamos a verificação ao repositório — a sala não conhece suas reservas diretamente
+        public bool EstaDisponivel(DateTime data, TimeSpan inicio, TimeSpan fim)
+        {
+            var repo = RepositorioReservas.Instancia;
+            return !repo.ExisteConflito(Id, data, inicio, fim, reservaIgnoradaId: null);
+        }
+
+        protected Classroom(int id, int numero, int capacidade)
+        {
+            Id = id;
+            Numero = numero;
+            Capacidade = capacidade;
+        }
+
+        public override string ToString() => $"{Descricao} #{Numero} (cap. {Capacidade})";
 }//Utilizamos uma classe base para representar salas de aula
 
 public class Laboratory : Classroom
 {
-    public Laboratory(int number_classroom, int capacity, bool isAvailable, int id)
-        : base(ClassroomType.Laboratory, number_classroom, capacity, isAvailable, id)
-    {
-    }
+    public override TipoSala Tipo => TipoSala.Laboratorio;
+        public override string Descricao => "Laboratório";
+
+        public Laboratorio(int id, int numero, int capacidade)
+            : base(id, numero, capacidade) { }
 }
 
 public class StudyRoom : Classroom
 {
-    public StudyRoom(int number_classroom, int capacity, bool isAvailable, int id)
-        : base(ClassroomType.StudyRoom, number_classroom, capacity, isAvailable, id)
-    {
-    }
+    public override TipoSala Tipo => TipoSala.SalaEstudo;
+    public override string Descricao => "Sala de Estudo";
+
+        public SalaEstudo(int id, int numero, int capacidade)
+            : base(id, numero, capacidade) { }
 }
 
 public class WorkgroupRoom : Classroom
 {
-    public WorkgroupRoom(int number_classroom, int capacity, bool isAvailable, int id)
-        : base(ClassroomType.WorkgroupRoom, number_classroom, capacity, isAvailable, id)
-    {
-    }
+     public override TipoSala Tipo => TipoSala.SalaTrabalhoGrupo;
+        public override string Descricao => "Sala de Trabalho em Grupo";
+
+        public SalaTrabalhoGrupo(int id, int numero, int capacidade)
+            : base(id, numero, capacidade) { }
 }
 
 
 
 public class ClassroomFactory//Fábrica para criar instâncias de salas de aula com base no tipo especificado
 {
-    public static IClassroom CreateClassroom(ClassroomType type, int number_classroom, int capacity, bool isAvailable, int id)
-    {
-        switch (type)
-        {
-            case ClassroomType.Laboratory:
-                return new Laboratory(number_classroom, capacity, isAvailable, id);
-            case ClassroomType.StudyRoom:
-                return new StudyRoom(number_classroom, capacity, isAvailable, id);
-            case ClassroomType.WorkgroupRoom:
-                return new WorkgroupRoom(number_classroom, capacity, isAvailable, id);
-            default:
-                throw new ArgumentException("Invalid classroom type");
-        }
+    public abstract ISala CriarSala(int id, int numero, int capacidade);
     }
-}
+
+    public class LaboratorioFactory : SalaFactory
+    {
+        public override ISala CriarSala(int id, int numero, int capacidade)
+            => new Laboratorio(id, numero, capacidade);
+    }
+
+    public class SalaEstudoFactory : SalaFactory
+    {
+        public override ISala CriarSala(int id, int numero, int capacidade)
+            => new SalaEstudo(id, numero, capacidade);
+    }
+
+    public class SalaTrabalhoGrupoFactory : SalaFactory
+    {
+        public override ISala CriarSala(int id, int numero, int capacidade)
+            => new SalaTrabalhoGrupo(id, numero, capacidade);
+    }
+
+    // Utilitário que mapeia enum → factory (mantém o switch em um único lugar)
+    public static class SalaFactoryProvider
+    {
+        public static SalaFactory ObterFactory(TipoSala tipo) => tipo switch
+        {
+            TipoSala.Laboratorio        => new LaboratorioFactory(),
+            TipoSala.SalaEstudo         => new SalaEstudoFactory(),
+            TipoSala.SalaTrabalhoGrupo  => new SalaTrabalhoGrupoFactory(),
+            _ => throw new ArgumentException($"Tipo de sala desconhecido: {tipo}")
+        };
+    }
+
