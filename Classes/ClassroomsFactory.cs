@@ -5,12 +5,12 @@ public static class ClassroomsFactory
     {
         switch (Type)
         {
-            case ClassroomType.InfoLab:
-                return new InfoLabClassroom(number);            
-            case ClassroomType.SeminaryRoom:
-                return new SeminaryClassroom(number);
-            case ClassroomType.ChemistryLab:
-                return new ChemistryLabClassroom(number);
+            case ClassroomType.IndividualStudyRoom:
+                return new IndividualStudyRoomClassroom(number);            
+            case ClassroomType.GroupWorkRoom:
+                return new GroupWorkRoomClassroom(number);
+            case ClassroomType.LabRoom:
+                return new LabRoomClassroom(number);
             default:
                 return null;
             

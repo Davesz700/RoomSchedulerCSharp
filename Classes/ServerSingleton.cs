@@ -83,17 +83,18 @@ public class ServerSingleton
             {
 
                 switch (separated[1])
-                {                case "InfoLab":
+                {
+                    case "IndividualStudyRoom":
                         _cachedRooms.Add(ClassroomsFactory
-                            .CreateRoom(ClassroomType.InfoLab,int.Parse(separated[0])));
+                            .CreateRoom(ClassroomType.IndividualStudyRoom,int.Parse(separated[0])));
                         break;
-                    case "SeminaryRoom":
+                    case "GroupWorkRoom":
                         _cachedRooms.Add(ClassroomsFactory
-                            .CreateRoom(ClassroomType.SeminaryRoom,int.Parse(separated[0])));
+                            .CreateRoom(ClassroomType.GroupWorkRoom,int.Parse(separated[0])));
                         break;
-                    case "ChemistryLab":
+                    case "LabRoom":
                         _cachedRooms.Add(ClassroomsFactory
-                            .CreateRoom(ClassroomType.ChemistryLab,int.Parse(separated[0])));
+                            .CreateRoom(ClassroomType.LabRoom,int.Parse(separated[0])));
                         break;
                 }
 

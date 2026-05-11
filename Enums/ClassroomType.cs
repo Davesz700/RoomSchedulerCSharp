@@ -1,6 +1,6 @@
 public enum ClassroomType
 {
-    InfoLab,
-    SeminaryRoom,
-    ChemistryLab
+    IndividualStudyRoom,
+    GroupWorkRoom,
+    LabRoom
 }

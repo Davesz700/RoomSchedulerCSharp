@@ -1,4 +1,4 @@
-public class ChemistryLabClassroom : IClassroom
+public class LabRoomClassroom : IClassroom
 {
     private int _number;
     private IReservationStrategy _reservationStrategy;
@@ -10,7 +10,7 @@ public class ChemistryLabClassroom : IClassroom
         }
     }
 
-    public ChemistryLabClassroom(int number){
+    public LabRoomClassroom(int number){
         this._number = number;
         this.ReservationStrategy = new FirstPriorityStrategie();
     }
