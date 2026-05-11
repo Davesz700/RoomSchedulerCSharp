@@ -1,5 +1,7 @@
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
+
 public class ServerSingleton
 {
     private static ServerSingleton _instance;
@@ -21,14 +23,27 @@ public class ServerSingleton
     {
         try
         {
-            string[] users = File.ReadAllLines(USERS_PATH);
+            List<string> users = File.ReadAllLines(USERS_PATH).ToList();
+            var usernames = users;
+            usernames.ForEach(x => x.Split("|"));
             
+            if (usernames.Contains(Name))
+            {
+                throw new Exception("Um usuário com esse nome já existe!");
+            }
+            File.AppendAllText(USERS_PATH, $"{Name}|{IsProfessor}|{Password}");
+            return new User(Name, IsProfessor);
         }
-        catch
+        catch(Exception e)
         {
+            Console.WriteLine(e);
             
         }
         return null;
+    }
+    public void Login()
+    {
+        
     }
 
 
