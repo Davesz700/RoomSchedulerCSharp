@@ -41,9 +41,31 @@ public class ServerSingleton
         }
         return null;
     }
-    public void Login()
+    public User Login(string Name, string Password)
     {
-        
+        try
+        {
+            var user = File.ReadAllLines(USERS_PATH).FirstOrDefault( l => l.StartsWith(Name));
+            
+            if (user == null)
+            {
+                throw new Exception("Usuário não encontrado!");
+            }
+            var password = user.Split("|")[2];
+            
+            if(Password != password)
+            {
+                throw new Exception("Senha incorreta!");
+            }
+            
+            if(user.Split("|")[1] == "true")return new User(Name, true);
+            else return new User(Name, false);        
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        return null;
     }
 
 
