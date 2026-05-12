@@ -10,9 +10,11 @@ public class ServerSingleton
     private const string CLASSROOMS_PATH = "./classrooms.txt";
     private const string USERS_PATH = "./users.txt";
     private const string NOTIFICATIONS_PATH = "./Notifications.txt";
-    private  List<IClassroom> _cachedRooms;
+    private List<IClassroom> _cachedRooms;
     private List<User> _cachedUsers;
     private List<Reservation> _cachedReservations;
+    private readonly List<IReservationObserver> _subscribers = new();
+
     private ServerSingleton()
     {
         _cachedRooms = new();
@@ -26,6 +28,40 @@ public class ServerSingleton
             _instance = new ServerSingleton();
         }
         return _instance;
+    }
+
+    public void Subscribe(IReservationObserver observer)
+    {
+        if (observer != null && !_subscribers.Contains(observer))
+        {
+            _subscribers.Add(observer);
+        }
+    }
+
+    public void Unsubscribe(IReservationObserver observer)
+    {
+        if (observer != null)
+        {
+            _subscribers.Remove(observer);
+        }
+    }
+
+    public IReadOnlyList<Reservation> GetReservations()
+    {
+        if (_cachedReservations.Count == 0)
+        {
+            CacheReservations();
+        }
+
+        return _cachedReservations.AsReadOnly();
+    }
+
+    private void NotifyReservationChanged(Reservation reservation)
+    {
+        foreach (var subscriber in _subscribers)
+        {
+            subscriber.ReservationChanged(this, reservation);
+        }
     }
 
     public User CreateUser(string Name, string Password, bool IsProfessor)
@@ -212,6 +248,7 @@ public class ServerSingleton
 
             File.AppendAllText(RESERVATIONS_PATH, $"\n{Author.Name}|{From:o}|{To:o}|{RoomNumber}");
             _cachedReservations.Add(reservation);
+            NotifyReservationChanged(reservation);
             return reservation;
         }
         catch(Exception e)
