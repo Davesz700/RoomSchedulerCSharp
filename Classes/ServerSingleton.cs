@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-public class ServerSingleton
+public class ServerSingleton : IReservationSubject
 {
     private static ServerSingleton _instance;
     private const string RESERVATIONS_PATH = "./reservations.txt";
