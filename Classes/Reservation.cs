@@ -7,11 +7,12 @@ public class Reservation
 
 
 
-    public Reservation(User Author, DateTime From, DateTime To)
+    public Reservation(User Author, DateTime From, DateTime To, int RoomNumber)
     {
         this._author = Author;
         this._from = From;
         this._to = To;
+        this._roomNumber = RoomNumber;
     }
 
 

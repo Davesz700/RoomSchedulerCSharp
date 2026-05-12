@@ -46,14 +46,14 @@ public class ServerSingleton : IReservationSubject
         }
     }
 
-    public IReadOnlyList<Reservation> GetReservations()
+    public List<Reservation> GetReservations()
     {
         if (_cachedReservations.Count == 0)
         {
             CacheReservations();
         }
 
-        return _cachedReservations.AsReadOnly();
+        return _cachedReservations;
     }
 
     private void NotifyReservationChanged(Reservation reservation)
@@ -185,14 +185,15 @@ public class ServerSingleton : IReservationSubject
         {
             var separated = x.Split("|");
             var authorName = separated[0];
-            var from = DateTime.Parse(separated[1]);
-            var to = DateTime.Parse(separated[2]);
-            var roomNumber = int.Parse(separated[3]);
+            var roomNumber = int.Parse(separated[1]);
+            var from = DateTime.Parse(separated[2]);
+            var to = DateTime.Parse(separated[3]);
+            
 
             if(!_cachedReservations.Any(r => r.Author.Name == authorName && r.From == from && r.To == to && r.RoomNumber == roomNumber))
             {
                 var author = _cachedUsers.FirstOrDefault(u => u.Name == authorName) ?? new User(authorName, false);
-                var reservation = new Reservation(author, from, to);
+                var reservation = new Reservation(author, from, to, roomNumber);
                 reservation.RoomNumber = roomNumber;
                 _cachedReservations.Add(reservation);
             }
@@ -224,38 +225,18 @@ public class ServerSingleton : IReservationSubject
         return;
     }
 
-    public Reservation CreateReservation(User Author, DateTime From, DateTime To, int RoomNumber)
+    public void StoreReservation(Reservation reservation)
     {
-        try
-        {
-            if(_cachedReservations.Count == 0)
-            {
-                CacheReservations();
-            }
+        var storeData = $"\n{reservation.Author.Name}|{reservation.RoomNumber}|{reservation.From}|{reservation.To}";
 
-            if(_cachedUsers.Count == 0)
-            {
-                CacheUsers();
-            }
-
-            var reservation = new Reservation(Author, From, To);
-            reservation.RoomNumber = RoomNumber;
-
-            if(_cachedReservations.Any(r => r.Author.Name == Author.Name && r.From == From && r.To == To && r.RoomNumber == RoomNumber))
-            {
-                throw new Exception("Esta reserva já existe!");
-            }
-
-            File.AppendAllText(RESERVATIONS_PATH, $"\n{Author.Name}|{From:o}|{To:o}|{RoomNumber}");
-            _cachedReservations.Add(reservation);
-            NotifyReservationChanged(reservation);
-            return reservation;
-        }
-        catch(Exception e)
-        {
-            Console.WriteLine(e);
-        }
-        return null;
+        File.AppendAllText(RESERVATIONS_PATH, storeData);
+        CacheReservations();
     }
-
+    public void DeleteReservation(Reservation reservation)
+    {
+        var lineToDelete = $"\n{reservation.Author.Name}|{reservation.RoomNumber}|{reservation.From}|{reservation.To}";
+        var newLines = File.ReadLines(RESERVATIONS_PATH).Where(l => l!= lineToDelete).ToList();
+        File.WriteAllLines(RESERVATIONS_PATH, newLines);
+        CacheReservations();
+    }
 }

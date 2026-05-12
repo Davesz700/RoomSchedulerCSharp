@@ -29,9 +29,9 @@ public class GroupWorkRoomClassroom : IClassroom
         }
     }
 
-    public void PlaceReservation()
+    public void PlaceReservation(IClassroom classroom, User Author, DateTime From, DateTime To)
     {
-        
+        this._reservationStrategy.PlaceReservation(classroom, Author, From, To);
     }
 
 }
