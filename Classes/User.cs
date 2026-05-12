@@ -8,7 +8,7 @@ public class User
         {
             return this._name;
         }
-    }
+    }//a
     public bool IsProfessor
     {
         get
