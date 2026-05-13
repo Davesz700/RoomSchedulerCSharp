@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-public class ServerSingleton : IReservationSubject
+public class ServerSingleton : IReservationSubject//coloquei uma referencia ao subject para que possa notificar os observers
 {
     private static ServerSingleton _instance;
     private const string RESERVATIONS_PATH = "./reservations.txt";
