@@ -2,6 +2,9 @@
 
 RoomSchedulerCS é um agendador de salas simples em C# que roda como um aplicativo de console.
 
+AUTORES: Davi de Oliveira Custódio 176468
+Nicolas David 17662
+
 ## O que ele faz
 
 - Gerencia usuários com login e cadastro.
