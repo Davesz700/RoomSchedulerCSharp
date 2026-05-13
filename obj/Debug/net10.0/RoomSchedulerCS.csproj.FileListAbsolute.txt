@@ -1,0 +1,15 @@
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\obj\Debug\net10.0\RoomSchedulerCS.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\obj\Debug\net10.0\RoomSchedulerCS.AssemblyInfoInputs.cache
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\obj\Debug\net10.0\RoomSchedulerCS.AssemblyInfo.cs
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\obj\Debug\net10.0\RoomSchedulerCS.csproj.CoreCompileInputs.cache
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\obj\Debug\net10.0\RoomSchedulerCS.sourcelink.json
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\bin\Debug\net10.0\RoomSchedulerCS.exe
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\bin\Debug\net10.0\RoomSchedulerCS.deps.json
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\bin\Debug\net10.0\RoomSchedulerCS.runtimeconfig.json
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\bin\Debug\net10.0\RoomSchedulerCS.dll
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\bin\Debug\net10.0\RoomSchedulerCS.pdb
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\obj\Debug\net10.0\RoomSchedulerCS.dll
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\obj\Debug\net10.0\refint\RoomSchedulerCS.dll
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\obj\Debug\net10.0\RoomSchedulerCS.pdb
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\obj\Debug\net10.0\RoomSchedulerCS.genruntimeconfig.cache
+C:\Users\homer\OneDrive\Desktop\Atividade_UNIFESP\POO\RoomSchedulerCSharp\obj\Debug\net10.0\ref\RoomSchedulerCS.dll
