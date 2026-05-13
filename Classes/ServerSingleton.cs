@@ -231,6 +231,7 @@ public class ServerSingleton : IReservationSubject
 
         File.AppendAllText(RESERVATIONS_PATH, storeData);
         CacheReservations();
+        NotifyReservationChanged(reservation);
     }
     public void DeleteReservation(Reservation reservation)
     {
